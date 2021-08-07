@@ -13,3 +13,7 @@ Run project: `docker-compose up -d` :rocket:
 Run tests: `./mvnw test` :test_tube:
 
 Run project: ./mvnw spring-boot:run :rocket:
+
+### Api Docs
+
+URL: http://localhost:8081/api/swagger-ui.html
