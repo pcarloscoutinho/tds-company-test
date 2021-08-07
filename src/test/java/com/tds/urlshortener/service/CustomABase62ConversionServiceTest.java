@@ -1,6 +1,6 @@
 package com.tds.urlshortener.service;
 
-import com.tds.urlshortener.service.impl.CustomAConversionServiceImpl;
+import com.tds.urlshortener.service.impl.CustomABase62ConversionServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -12,22 +12,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CustomAConversionServiceImpl.class})
-class CustomAConversionServiceTest {
+@ContextConfiguration(classes = {CustomABase62ConversionServiceImpl.class})
+class CustomABase62ConversionServiceTest {
 
     @Autowired
-    private ConversionService conversionService;
+    private Base62ConversionService base62ConversionService;
 
     @Test
     void encode() {
-        String encode = conversionService.encode(1L);
+        String encode = base62ConversionService.encode(1L);
 
         assertEquals("b", encode);
     }
 
     @Test
     void decode() {
-        long decode = conversionService.decode("b");
+        long decode = base62ConversionService.decode("b");
 
         assertEquals(1L, decode);
     }

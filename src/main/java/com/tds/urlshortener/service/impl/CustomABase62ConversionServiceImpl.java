@@ -1,12 +1,12 @@
 package com.tds.urlshortener.service.impl;
 
-import com.tds.urlshortener.service.ConversionService;
+import com.tds.urlshortener.service.Base62ConversionService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-@Qualifier("customAConversionServiceImpl")
-public class CustomAConversionServiceImpl implements ConversionService {
+@Qualifier("customABase62ConversionServiceImpl")
+public class CustomABase62ConversionServiceImpl implements Base62ConversionService {
 
     private static final String ALLOWED_STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final char[] ALLOWED_CHARACTERS = ALLOWED_STRING.toCharArray();

@@ -4,7 +4,7 @@ import com.tds.urlshortener.dto.CreateShortUrlDTO;
 import com.tds.urlshortener.model.Statistic;
 import com.tds.urlshortener.model.Url;
 import com.tds.urlshortener.repository.UrlRepository;
-import com.tds.urlshortener.service.ConversionService;
+import com.tds.urlshortener.service.Base62ConversionService;
 import com.tds.urlshortener.service.UrlService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -21,15 +20,15 @@ public class UrlServiceImpl implements UrlService {
 
     private static final Long INITIAL_COUNT_VALUE = 0L;
 
-    private final ConversionService conversionService;
+    private final Base62ConversionService base62ConversionService;
     private final UrlRepository urlRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UrlServiceImpl(@Qualifier("customAConversionServiceImpl") ConversionService conversionService,
+    public UrlServiceImpl(@Qualifier("customABase62ConversionServiceImpl") Base62ConversionService base62ConversionService,
                           UrlRepository urlRepository,
                           ModelMapper modelMapper) {
-        this.conversionService = conversionService;
+        this.base62ConversionService = base62ConversionService;
         this.urlRepository = urlRepository;
         this.modelMapper = modelMapper;
     }
@@ -43,7 +42,7 @@ public class UrlServiceImpl implements UrlService {
 
         var savedUrl = urlRepository.save(url);
 
-        String encodedId = conversionService.encode(savedUrl.getId());
+        String encodedId = base62ConversionService.encode(savedUrl.getId());
 
         try {
             var mountUrl = new URL(requestUrl);
@@ -58,7 +57,7 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     public Url findByShortUrl(String shortUrl) {
-        Long urlId = conversionService.decode(shortUrl);
+        Long urlId = base62ConversionService.decode(shortUrl);
         return findById(urlId);
     }
 

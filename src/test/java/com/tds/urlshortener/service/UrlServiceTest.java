@@ -33,8 +33,8 @@ class UrlServiceTest {
     private UrlRepository urlRepository;
 
     @MockBean
-    @Qualifier("customAConversionServiceImpl")
-    private ConversionService conversionService;
+    @Qualifier("customABase62ConversionServiceImpl")
+    private Base62ConversionService base62ConversionService;
 
     @MockBean
     private ModelMapper modelMapper;
@@ -48,7 +48,7 @@ class UrlServiceTest {
 
         when(modelMapper.map(createShortUrlDTO, Url.class)).thenReturn(Url.builder().longUrl(LONG_URL).build());
         when(urlRepository.save(any(Url.class))).thenReturn(Url.builder().id(1L).longUrl(LONG_URL).build());
-        when(conversionService.encode(1L)).thenReturn("b");
+        when(base62ConversionService.encode(1L)).thenReturn("b");
 
         String shortUrl = urlService.createShortUrl(createShortUrlDTO, "http://localhost:8081/api/v1/createUrl");
         String expectedResult = shortUrl.split("/")[5];
@@ -59,7 +59,7 @@ class UrlServiceTest {
 
     @Test
     void findByShortUrl() {
-        when(conversionService.decode("b")).thenReturn(1L);
+        when(base62ConversionService.decode("b")).thenReturn(1L);
         when(urlRepository.findById(1L)).thenReturn(Optional.of(Url.builder().id(1L).build()));
 
         Url url = urlService.findByShortUrl("b");

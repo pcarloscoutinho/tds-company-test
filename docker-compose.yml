@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  url-shortener-backend:
+    build: .
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://database:5432/urlshortener"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "docker"
+    ports:
+    - "8081:8081"
+    networks:
+      - tds
+
+  database:
+    image: postgres:11.8-alpine
+    environment:
+      POSTGRES_PASSWORD: docker
+    volumes:
+      - postgres-url-shortener-data:/var/lib/postgresql/data
+      - ./.docker/db/:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - tds
+
+
+volumes:
+  postgres-url-shortener-data:
+
+networks:
+  tds:

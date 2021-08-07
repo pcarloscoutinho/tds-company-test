@@ -1,6 +1,6 @@
 package com.tds.urlshortener.service;
 
-public interface ConversionService {
+public interface Base62ConversionService {
     String encode(Long input);
     long decode(String input);
 }
