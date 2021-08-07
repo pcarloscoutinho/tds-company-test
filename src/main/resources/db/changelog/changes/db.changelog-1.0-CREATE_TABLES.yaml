@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0-CREATE_TABLES
+      author: Paulo Coutinho
+      changes:
+        - createTable:
+            tableName: statistic
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: total_access_count
+                  type: bigint
+                  constraints:
+                    nullable: true
+
+        - createTable:
+            tableName: url
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: long_url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: statistic_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    referencedTableName: statistic
+                    referencedColumnNames: id
+                    foreignKeyName: url_statistic_fk_01
+
+        - createTable:
+            tableName: browser_log
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_agent
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    referencedTableName: url
+                    referencedColumnNames: id
+                    foreignKeyName: browser_log_url_fk_01

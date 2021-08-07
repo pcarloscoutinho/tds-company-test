@@ -2,6 +2,7 @@ version: "3.7"
 services:
   url-shortener-backend:
     build: .
+    image: url-shortener-backend:0.0.1
     depends_on:
       - database
     environment:
@@ -23,7 +24,6 @@ services:
     restart: always
     networks:
       - tds
-
 
 volumes:
   postgres-url-shortener-data:

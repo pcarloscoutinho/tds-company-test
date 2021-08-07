@@ -56,7 +56,6 @@ public class StatisticServiceImpl implements StatisticService {
         return statisticDTO;
     }
 
-    @Async
     @Override
     public Url saveBrowserLog(Url url, Map<String, String> browserInfo) {
         String userAgent = browserInfo.get("User-Agent");
