@@ -16,7 +16,7 @@ Visualize data :chart_with_upwards_trend: :
   
   - Password - tds
   
-  ![alt text](grafana1.jpg)
+  ![alt text](public/grafana1.jpg)
   
   - Select url-shortener-app for app metrics.
   - Select JVM(Micrometer) for JVM metrics.
