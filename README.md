@@ -34,7 +34,7 @@ Visualize data :chart_with_upwards_trend: :
 
 Run tests: `./mvnw test` :test_tube:
 
-Run project: ./mvnw spring-boot:run :rocket:
+Run project: `./mvnw spring-boot:run` :rocket:
 
 ### Api Instructions
 
