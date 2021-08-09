@@ -1,0 +1,16 @@
+global:
+  scrape_interval:     15s
+  external_labels:
+    monitor: 'prometheus-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'url-shortener-app'
+    scrape_interval: 5s
+    metrics_path: /api/actuator/prometheus
+    static_configs:
+      - targets: [ 'url-shortener-backend:8081' ]

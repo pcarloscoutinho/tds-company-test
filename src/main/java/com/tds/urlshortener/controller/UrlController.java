@@ -33,7 +33,7 @@ public class UrlController {
     @PostMapping("/url/createUrl")
     public ResponseEntity<ShortUrlResponseDTO> createUrl(@RequestBody CreateShortUrlDTO createShortUrlDTO) {
         String shortUrl = urlService.createShortUrl(createShortUrlDTO, httpServletRequest.getRequestURL().toString());
-        ShortUrlResponseDTO shortUrlResponseDTO = ShortUrlResponseDTO.builder().shortUrl(shortUrl).build();
+        var shortUrlResponseDTO = ShortUrlResponseDTO.builder().shortUrl(shortUrl).build();
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -49,7 +49,7 @@ public class UrlController {
         String longUrl = url.getLongUrl();
 
         statisticService.saveBrowserLog(url, browserInfo);
-        statisticService.incrementAccessCounter(url);
+        statisticService.incrementAccessCounter(url, shortUrl);
 
         return ResponseEntity
                 .status(HttpStatus.PERMANENT_REDIRECT)

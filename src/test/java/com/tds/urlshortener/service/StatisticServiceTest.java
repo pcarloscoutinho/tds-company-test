@@ -59,7 +59,7 @@ class StatisticServiceTest {
 
         when(urlRepository.save(initialUrl)).thenReturn(incrementedCounterUrl);
 
-        Long totalAccessCount = statisticService.incrementAccessCounter(initialUrl);
+        Long totalAccessCount = statisticService.incrementAccessCounter(initialUrl, "http://localhost:-1/b");
 
         verify(urlRepository, times(1)).save(isA(Url.class));
         assertEquals(3L, totalAccessCount);

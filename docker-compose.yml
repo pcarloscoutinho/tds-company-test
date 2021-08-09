@@ -25,8 +25,39 @@ services:
     networks:
       - tds
 
+  prometheus:
+    image: prom/prometheus:v2.28.1
+    volumes:
+      - ./.docker/prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
+    networks:
+      - tds
+
+  grafana:
+    image: grafana/grafana:8.1.0
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./.docker/grafana/provisioning/:/etc/grafana/provisioning/
+    env_file:
+      - ./.docker/grafana/config.monitoring
+    networks:
+      - tds
+
 volumes:
   postgres-url-shortener-data:
+  prometheus-data:
+  grafana-data:
 
 networks:
   tds:

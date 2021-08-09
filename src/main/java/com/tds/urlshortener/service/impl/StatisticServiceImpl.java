@@ -8,6 +8,9 @@ import com.tds.urlshortener.repository.BrowserLogRepository;
 import com.tds.urlshortener.repository.UrlRepository;
 import com.tds.urlshortener.service.StatisticService;
 import com.tds.urlshortener.service.UrlService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -29,18 +32,24 @@ public class StatisticServiceImpl implements StatisticService {
     public StatisticServiceImpl(UrlService urlService,
                                 UrlRepository urlRepository,
                                 BrowserLogRepository browserLogRepository,
-                                ModelMapper modelMapper) {
+                                ModelMapper modelMapper, MeterRegistry meterRegistry) {
         this.urlService = urlService;
         this.urlRepository = urlRepository;
         this.browserLogRepository = browserLogRepository;
         this.modelMapper = modelMapper;
+
+        Counter.builder("short_url_access_count")
+                .description("Short url access count.")
+                .tags("shortUrl", "")
+                .register(meterRegistry);
     }
 
     @Async
     @Override
-    public Long incrementAccessCounter(Url url) {
+    public Long incrementAccessCounter(Url url, String shortUrl) {
         Long accessCount = url.getStatistic().getTotalAccessCount();
         url.getStatistic().setTotalAccessCount(accessCount + 1);
+        Metrics.counter("short_url_access_count", "shortUrl", shortUrl).increment();
 
         var savedUrl = urlRepository.save(url);
 
