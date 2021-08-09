@@ -8,16 +8,18 @@ import com.tds.urlshortener.repository.BrowserLogRepository;
 import com.tds.urlshortener.repository.UrlRepository;
 import com.tds.urlshortener.service.StatisticService;
 import com.tds.urlshortener.service.UrlService;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.Tags;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +29,8 @@ public class StatisticServiceImpl implements StatisticService {
     private final UrlRepository urlRepository;
     private final BrowserLogRepository browserLogRepository;
     private final ModelMapper modelMapper;
+    private final MeterRegistry meterRegistry;
+    private final Map<String, AtomicLong> currentAccessCount = new HashMap<>();
 
     @Autowired
     public StatisticServiceImpl(UrlService urlService,
@@ -37,11 +41,7 @@ public class StatisticServiceImpl implements StatisticService {
         this.urlRepository = urlRepository;
         this.browserLogRepository = browserLogRepository;
         this.modelMapper = modelMapper;
-
-        Counter.builder("short_url_access_count")
-                .description("Short url access count.")
-                .tags("shortUrl", "")
-                .register(meterRegistry);
+        this.meterRegistry = meterRegistry;
     }
 
     @Async
@@ -49,9 +49,14 @@ public class StatisticServiceImpl implements StatisticService {
     public Long incrementAccessCounter(Url url, String shortUrl) {
         Long accessCount = url.getStatistic().getTotalAccessCount();
         url.getStatistic().setTotalAccessCount(accessCount + 1);
-        Metrics.counter("short_url_access_count", "shortUrl", shortUrl).increment();
+
+        currentAccessCount.computeIfAbsent(shortUrl, v -> new AtomicLong());
 
         var savedUrl = urlRepository.save(url);
+
+        Objects.requireNonNull(this.meterRegistry.gauge("short_url_access_count",
+                Tags.of("shortUrl", shortUrl), currentAccessCount.get(shortUrl)))
+                .set(savedUrl.getStatistic().getTotalAccessCount());
 
         return savedUrl.getStatistic().getTotalAccessCount();
     }

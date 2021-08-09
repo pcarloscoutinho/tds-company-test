@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1628471476835,
+  "iteration": 1628522785818,
   "links": [],
   "panels": [
     {
@@ -75,7 +75,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "short_url_access_count_total{instance=\"url-shortener-backend:8081\",job=\"url-shortener-app\",shortUrl=\"${shortUrl}\"}",
+          "expr": "short_url_access_count{instance=\"url-shortener-backend:8081\",job=\"url-shortener-app\",shortUrl=\"${shortUrl}\"}",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -97,11 +97,11 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "c",
-          "value": "c"
+          "text": "b",
+          "value": "b"
         },
         "datasource": null,
-        "definition": "label_values(short_url_access_count_total, shortUrl)",
+        "definition": "label_values(short_url_access_count, shortUrl)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -111,7 +111,7 @@
         "name": "shortUrl",
         "options": [],
         "query": {
-          "query": "label_values(short_url_access_count_total, shortUrl)",
+          "query": "label_values(short_url_access_count, shortUrl)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,

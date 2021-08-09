@@ -5,6 +5,7 @@ import com.tds.urlshortener.dto.ShortUrlResponseDTO;
 import com.tds.urlshortener.service.StatisticService;
 import com.tds.urlshortener.service.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,7 @@ public class UrlController {
 
         return ResponseEntity
                 .status(HttpStatus.PERMANENT_REDIRECT)
+                .cacheControl(CacheControl.noStore().mustRevalidate())
                 .location(URI.create(longUrl))
                 .build();
     }
