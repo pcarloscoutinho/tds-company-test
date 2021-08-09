@@ -21,6 +21,14 @@ Visualize data :chart_with_upwards_trend: :
   - Select url-shortener-app for app metrics.
   - Select JVM(Micrometer) for JVM metrics.
 
+  ![alt text](public/grafana2.png?raw=true "Grafana1")
+  
+  - Select shortUrl variable from list
+  
+  ![alt text](public/grafana3.png?raw=true "Grafana1")
+  
+  - JVM Metrics
+
 
 ### Maven Wrapper Instructions
 
