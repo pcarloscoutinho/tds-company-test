@@ -45,7 +45,7 @@ POST - localhost:8081/api/v1/url/createUrl
 
 Body:
 {
-    "longUrl": "you_long_url"
+    "longUrl": "your_long_url"
 }
 ```
 
