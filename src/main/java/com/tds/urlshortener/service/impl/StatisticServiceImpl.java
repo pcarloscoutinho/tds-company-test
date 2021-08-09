@@ -6,20 +6,16 @@ import com.tds.urlshortener.model.BrowserLog;
 import com.tds.urlshortener.model.Url;
 import com.tds.urlshortener.repository.BrowserLogRepository;
 import com.tds.urlshortener.repository.UrlRepository;
+import com.tds.urlshortener.service.MicrometerService;
 import com.tds.urlshortener.service.StatisticService;
 import com.tds.urlshortener.service.UrlService;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tags;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,19 +25,19 @@ public class StatisticServiceImpl implements StatisticService {
     private final UrlRepository urlRepository;
     private final BrowserLogRepository browserLogRepository;
     private final ModelMapper modelMapper;
-    private final MeterRegistry meterRegistry;
-    private final Map<String, AtomicLong> currentAccessCount = new HashMap<>();
+    private final MicrometerService micrometerService;
 
     @Autowired
     public StatisticServiceImpl(UrlService urlService,
                                 UrlRepository urlRepository,
                                 BrowserLogRepository browserLogRepository,
-                                ModelMapper modelMapper, MeterRegistry meterRegistry) {
+                                ModelMapper modelMapper,
+                                MicrometerService micrometerService) {
         this.urlService = urlService;
         this.urlRepository = urlRepository;
         this.browserLogRepository = browserLogRepository;
         this.modelMapper = modelMapper;
-        this.meterRegistry = meterRegistry;
+        this.micrometerService = micrometerService;
     }
 
     @Async
@@ -50,13 +46,9 @@ public class StatisticServiceImpl implements StatisticService {
         Long accessCount = url.getStatistic().getTotalAccessCount();
         url.getStatistic().setTotalAccessCount(accessCount + 1);
 
-        currentAccessCount.computeIfAbsent(shortUrl, v -> new AtomicLong());
-
         var savedUrl = urlRepository.save(url);
 
-        Objects.requireNonNull(this.meterRegistry.gauge("short_url_access_count",
-                Tags.of("shortUrl", shortUrl), currentAccessCount.get(shortUrl)))
-                .set(savedUrl.getStatistic().getTotalAccessCount());
+        micrometerService.registerAccessCountGauge(shortUrl, url);
 
         return savedUrl.getStatistic().getTotalAccessCount();
     }

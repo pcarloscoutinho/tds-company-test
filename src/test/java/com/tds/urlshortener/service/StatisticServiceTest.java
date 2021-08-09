@@ -7,13 +7,17 @@ import com.tds.urlshortener.model.Statistic;
 import com.tds.urlshortener.model.Url;
 import com.tds.urlshortener.repository.BrowserLogRepository;
 import com.tds.urlshortener.repository.UrlRepository;
+import com.tds.urlshortener.service.impl.MicrometerServiceImpl;
+import com.tds.urlshortener.service.impl.MockMicrometerServiceImpl;
 import com.tds.urlshortener.service.impl.StatisticServiceImpl;
-import com.tds.urlshortener.service.impl.UrlServiceImpl;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,13 +25,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {StatisticServiceImpl.class})
+@ContextConfiguration(classes = {StatisticServiceImpl.class, MockMicrometerServiceImpl.class,})
 class StatisticServiceTest {
 
     @MockBean
@@ -44,6 +49,13 @@ class StatisticServiceTest {
 
     @Autowired
     private StatisticService statisticService;
+
+    @MockBean
+    private MeterRegistry meterRegistry;
+
+    @Autowired
+    @Qualifier("mockMicrometerServiceImpl")
+    private MockMicrometerServiceImpl mockMicrometerService;
 
     @Test
     void incrementAccessCounter() {
